@@ -16,12 +16,41 @@ module.exports = async (req, res) => {
     return res.status(400).json({ ok: false, message: "Faltan object_id y class_id_full" });
   }
 
+  const lang = (body.lang || "es-CR").trim();
+  const cardTitle = (body.card_title || body.title || "Wallet Pass").trim();
+  const header = (body.header || body.target_name || "Cliente").trim();
+  const subheader = (body.subheader || "Acceso").trim();
+
+  const genericObject = {
+    id: objectId,
+    classId: classIdFull,
+    state: "ACTIVE",
+    cardTitle: {
+      defaultValue: {
+        language: lang,
+        value: cardTitle
+      }
+    },
+    header: {
+      defaultValue: {
+        language: lang,
+        value: header
+      }
+    },
+    subheader: {
+      defaultValue: {
+        language: lang,
+        value: subheader
+      }
+    }
+  };
+
   const payload = {
     iss: process.env.GOOGLE_CLIENT_EMAIL,
     aud: "google",
     typ: "savetowallet",
     origins: [],
-    payload: { genericObjects: [{ id: objectId, classId: classIdFull }] }
+    payload: { genericObjects: [genericObject] }
   };
 
   try {
