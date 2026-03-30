@@ -49,7 +49,15 @@ module.exports = async (req, res) => {
   const objectsPayload =
     passType === "generic"
       ? { genericObjects: [genericObject] }
-      : { eventTicketObjects: [{ id: objectId, classId: classIdFull }] };
+      : {
+          eventTicketObjects: [
+            {
+              id: objectId,
+              classId: classIdFull,
+              state: "ACTIVE"
+            }
+          ]
+        };
 
   const payload = {
     iss: process.env.GOOGLE_CLIENT_EMAIL,
