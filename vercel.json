@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "functions": {
+    "api/sign-google-wallet.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/sign-google-wallet",
+      "dest": "/api/sign-google-wallet"
+    },
+    {
+      "src": "/api/sign-google-wallet",
+      "dest": "/api/sign-google-wallet"
+    }
+  ]
+}
