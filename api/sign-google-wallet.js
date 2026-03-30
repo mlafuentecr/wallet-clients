@@ -76,6 +76,7 @@ module.exports = async (req, res) => {
     res.status(200).json({
       ok: true,
       pass_type: passType === "generic" ? "genericObjects" : "eventTicketObjects",
+      claims_preview: objectsPayload,
       jwt: token,
       save_url: `https://pay.google.com/gp/v/save/${token}`
     });
