@@ -20,6 +20,7 @@ module.exports = async (req, res) => {
   const cardTitle = (body.card_title || body.title || "Wallet Pass").trim();
   const header = (body.header || body.target_name || "Cliente").trim();
   const subheader = (body.subheader || "Acceso").trim();
+  const passType = String(body.pass_type || process.env.GOOGLE_PASS_TYPE || "eventTicket").toLowerCase();
 
   const genericObject = {
     id: objectId,
@@ -45,12 +46,17 @@ module.exports = async (req, res) => {
     }
   };
 
+  const objectsPayload =
+    passType === "generic"
+      ? { genericObjects: [genericObject] }
+      : { eventTicketObjects: [{ id: objectId, classId: classIdFull }] };
+
   const payload = {
     iss: process.env.GOOGLE_CLIENT_EMAIL,
     aud: "google",
     typ: "savetowallet",
     origins: [],
-    payload: { genericObjects: [genericObject] }
+    payload: objectsPayload
   };
 
   try {
@@ -59,7 +65,12 @@ module.exports = async (req, res) => {
       header: { alg: "RS256", typ: "JWT" }
     });
 
-    res.status(200).json({ ok: true, jwt: token, save_url: `https://pay.google.com/gp/v/save/${token}` });
+    res.status(200).json({
+      ok: true,
+      pass_type: passType === "generic" ? "genericObjects" : "eventTicketObjects",
+      jwt: token,
+      save_url: `https://pay.google.com/gp/v/save/${token}`
+    });
   } catch (e) {
     res.status(500).json({ ok: false, message: "sign failed", error: String(e.message || e) });
   }
